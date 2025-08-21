@@ -5,7 +5,7 @@ This is a simple, responsive web development quiz built using HTML, CSS, and Jav
 Building this quiz taught me how to combine HTML, CSS, and JavaScript to make an interactive project. I learned how to store questions in arrays of objects, create DOM elements from that data, and use event listeners for user interactions. Adding immediate feedback helped me understand conditional logic and how to change styles with class names.
 
 ## Live Demo
-You can try the quiz online here: [**Click to Open Quiz**](https://quiz-application-omega-dun.vercel.app/)
+You can try the quiz online here: [**Click to Open Quiz**](https://quiz-application-using-api.vercel.app/)
 
 ## Problems Faced
 ### Challenge 1: Making the Progress Bar Work Correctly

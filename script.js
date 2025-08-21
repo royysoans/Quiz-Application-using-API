@@ -16,7 +16,7 @@ const progressBar=document.querySelector("#progress-bar");
 const feedback=document.querySelector("#feedback");
 let currQuestionIdx,score;
 
-async function generateQuestionsWithGemini(topic) {
+async function generateQuestion(topic) {
     const prompt=`Generate 5 unique quiz questions on the topic "${topic}".
         Return the response as a valid JSON array of objects, and nothing else. Do not include any introductory text or code block formatting.
         Each object in the array must have this exact structure:
@@ -30,9 +30,7 @@ async function generateQuestionsWithGemini(topic) {
             ]
         }
         Ensure that for each question exactly one answer has "correct" set to true.`;
-
     const apiEndpoint=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
-
     const requestBody={
         contents:[{
             parts:[{
@@ -63,7 +61,7 @@ async function startQuiz() {
     startButton.textContent=`Generating ${topic} Quiz...`;
     startButton.disabled=true;
 
-    const generatedQuestions=await generateQuestionsWithGemini(topic);
+    const generatedQuestions=await generateQuestions(topic);
 
     if (generatedQuestions && generatedQuestions.length > 0) {
         questions=generatedQuestions;
@@ -117,43 +115,40 @@ function selectAnswer(e) {
         score++;
     } else{
         selectedButton.classList.add('incorrect');
-        const correctAnswer = Array.from(answerButton.children)
-            .find(btn => btn.dataset.correct=='true').innerText;
-        feedback.textContent = `Incorrect! The correct answer is: ${correctAnswer}`;
+        const correctAnswer=Array.from(answerButton.children)
+            .find(btn=>btn.dataset.correct=='true').innerText;
+        feedback.textContent=`Incorrect! The correct answer is: ${correctAnswer}`;
         feedback.classList.add('incorrect');
     }
 
     Array.from(answerButton.children).forEach(button => {
-        if (button.dataset.correct === 'true') {
+        if (button.dataset.correct==='true') {
             button.classList.add('correct');
         }
-        button.disabled = true;
+        button.disabled=true;
     });
     nextButton.classList.remove('hide');
 }
 
-// Handles the "Next" button click
 nextButton.addEventListener('click', () => {
     currQuestionIdx++;
     if (currQuestionIdx < questions.length) {
         showQuestion();
     } else {
-        progressBar.style.width = '100%';
-        setTimeout(() => {
+        progressBar.style.width='100%';
+        setTimeout(()=>{
             showScore();
-        }, 500);
+        },500);
     }
 });
 
-// Handles the "Restart" button click
 restartButton.addEventListener('click', () => {
     scoreScreen.classList.add('hide');
     startScreen.classList.remove('hide');
 });
 
-// Displays the final score
-function showScore() {
+function showScore(){
     displayScreen.classList.add('hide');
     scoreScreen.classList.remove('hide');
-    finalScore.innerText = `${score} / ${questions.length}`;
+    finalScore.innerText=`${score}/${questions.length}`;
 }

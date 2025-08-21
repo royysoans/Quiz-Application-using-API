@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz!</title>
+</head>
+<body>
+    <div class="quiz-container">
+
+        <div id="start-screen">
+            <h1>AI Quiz Generator</h1>
+            <p>Enter a topic tand test your knowledge</p>
+            <input id="topic-input" type="text" placeholder="e.g. Machine Learning, Web Dev">
+            <br>
+            <button id="start" class="btn">Generate Quiz</button>
+        </div>
+
+        <div id="display-screen" class="hide">  
+            <div id="progress-bar-container">
+                <div id="progress-bar">
+                </div>
+            </div>
+            <h2 id="question">Placeholder for question</h2>
+            <div id="answer-options"> </div>
+            <div id="feedback" class="hide"></div>
+            <button id="next" class="hide btn">Next</button>
+        </div>
+
+        <div id="score-screen" class="hide">
+            <h1>Quiz Completed!</h1>
+            <p>Your final score is: <span id="final">0</span> </p>
+            <button id="restart" class="btn">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

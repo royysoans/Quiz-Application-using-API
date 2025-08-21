@@ -16,7 +16,7 @@ const progressBar=document.querySelector("#progress-bar");
 const feedback=document.querySelector("#feedback");
 let currQuestionIdx,score;
 
-async function generateQuestion(topic) {
+async function generateQuestions(topic) {
     const prompt=`Generate 5 unique quiz questions on the topic "${topic}".
         Return the response as a valid JSON array of objects, and nothing else. Do not include any introductory text or code block formatting.
         Each object in the array must have this exact structure:
@@ -151,4 +151,4 @@ function showScore(){
     displayScreen.classList.add('hide');
     scoreScreen.classList.remove('hide');
     finalScore.innerText=`${score}/${questions.length}`;
-}
+}   

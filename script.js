@@ -44,10 +44,10 @@ async function generateQuestions(topic) {
             body:JSON.stringify(requestBody),
         });
 
-        if (!response.ok) {
+        if (!response.ok){
             throw new Error(`API request failed with status ${response.status}`);
         }
-        
+
         const data=await response.json();
         const jsonString=data.candidates[0].content.parts[0].text;
         return JSON.parse(jsonString);

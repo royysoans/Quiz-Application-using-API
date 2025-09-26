@@ -47,11 +47,16 @@ async function generateQuestions(topic) {
             throw new Error(`API request failed with status ${response.status}`);
         }
 
-        const data=await response.json();
-        const jsonString=data.candidates[0].content.parts[0].text;
-        return JSON.parse(jsonString);
+         const data = await response.json();
+    
+    let jsonString = data.candidates[0].content.parts[0].text;
+
+    if (jsonString.startsWith("```json")) {
+        jsonString = jsonString.slice(7, -3).trim();
     }
 
+    return JSON.parse(jsonString); 
+}
 startButton.addEventListener('click', startQuiz);
 
 async function startQuiz() {

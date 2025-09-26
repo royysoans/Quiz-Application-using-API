@@ -1,4 +1,3 @@
-const API_KEY="AIzaSyDUutrCZqkNuKGtiUYrLF_jZz_aHroUuew";
 let questions=[];
 
 const startScreen=document.querySelector("#start-screen");

@@ -1,3 +1,4 @@
+const apiUrl = '/api/generate';
 let questions=[];
 
 const startScreen=document.querySelector("#start-screen");

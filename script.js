@@ -29,7 +29,6 @@ async function generateQuestions(topic) {
             ]
         }
         Ensure that for each question exactly one answer has "correct" set to true.`;
-    const apiEndpoint=`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
     const requestBody={
         contents:[{
             parts:[{
@@ -37,7 +36,7 @@ async function generateQuestions(topic) {
             }]
         }],
     };
-        const response=await fetch(apiEndpoint,{
+        const response=await fetch(apiUrl,{
             method:'POST',
             headers:{'Content-Type':'application/json'},
             body:JSON.stringify(requestBody),

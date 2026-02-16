@@ -1,138 +1,218 @@
-body{
-    margin:0;
-    font-family:verdana,sans-serif;
-    color:white;
+:root {
+    --win-gray: #c0c0c0;
+    --win-dark: #808080;
+    --win-darker: #404040;
+    --win-light: #ffffff;
+    --win-blue: #000080;
+    --win-teal: #008080;
+    /* Classic desktop color */
+    --text-color: #000000;
+}
 
-    display:flex;
-    align-items:center;
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: var(--win-teal);
+    font-family: 'MS Sans Serif', 'Segoe UI', sans-serif;
+    /* Fallback for that classic look */
+    display: flex;
     justify-content: center;
-    min-height:100vh;
-    
-    background-image: linear-gradient(
-        45deg,
-        #03045e,
-        #0077b6,
-        #00b4d8,
-        #90e0ef,
-        #00f5d4
-    );
-    background-size:400% 400%;
-    animation:gradient-animation 3.5s ease infinite alternate;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    image-rendering: pixelated;
 }
 
-@keyframes gradient-animation
-{
-    from{background-position:0% 50%;}
-    to{background-position:100% 50%;}
+/* --- Window Container --- */
+.glass-container {
+    background-color: var(--win-gray);
+    width: 600px;
+    max-width: 95%;
+    padding: 3px;
+    box-shadow: inset 1px 1px #dfdfdf, inset -1px -1px #0a0a0a, inset 2px 2px white, inset -2px -2px #808080;
+    /* No border-radius or blurring for retro look */
 }
 
-h1
-{
-    color:#00b4d8;
-    font-size:3rem;
-    margin-bottom:1.5rem;
-}
-h2{
-    margin-bottom:2rem;
-}
-p{
-    margin-bottom:1.5rem;
-    font-size:1.1rem;
+/* --- Typography --- */
+h1,
+h2 {
+    margin: 0;
+    font-weight: bold;
 }
 
-#topic-input{
-    padding:0.8rem;
-    font-size:1.1rem;
-    height:20px;
-    width:50%;
-    margin-bottom:25px;
-    border-radius: 1.1rem;
-    outline:none;
-    border:none;
-    background-color:#90e0ef;
-    color:blue;
+p {
+    margin: 10px 0;
+    font-size: 14px;
 }
 
-.quiz-container
-{
-    text-align:center;
-    background-color:rgba(0,0,0,0.75);
-    border-radius:1.3rem;
-    padding:2rem;
-    width:600px;
-    max-width:90%;
-    border:1px solid rgba(255, 255, 255, 0.2);
+/* --- Common Window Elements --- */
+.screen {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.btn
-{
-    padding:1rem 2rem;
-    font-size:1.1rem;
-    background-color:#0077b6; 
-    color:white;
-    border:none;
-    border-radius:1.5rem; 
-    cursor:pointer;
-    transition:all 0.3s ease;
+/* Title Bar emulation for the header */
+.hero-header h1 {
+    background: var(--win-blue);
+    color: white;
+    padding: 4px 8px;
+    font-size: 16px;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-.btn:hover
-{
-    background-color:#0096c7; 
+.hero-header p {
+    padding: 10px;
 }
 
-#answer-options{
-    display:grid;
-    grid-template-columns:repeat(2, 1fr);
-    gap:1rem; 
-    margin-bottom:2rem;
+/* --- Inputs --- */
+input[type="text"] {
+    border: 2px solid;
+    border-color: #808080 #dfdfdf #dfdfdf #808080;
+    /* Inset look */
+    background: white;
+    padding: 4px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    width: 100%;
+    margin-bottom: 10px;
 }
 
-.hide{
-    display:none;
+/* --- Buttons --- */
+.btn {
+    background: var(--win-gray);
+    color: black;
+    border: 2px solid;
+    border-color: white #808080 #808080 white;
+    box-shadow: 1px 1px 0 black;
+    padding: 6px 12px;
+    font-size: 14px;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
 }
 
-.btn:active{
-    transform:scale(1.1);
+.btn:active {
+    border-color: #808080 white white #808080;
+    transform: translate(1px, 1px);
+    box-shadow: none;
 }
 
-.btn.correct
-{
-    background-color:green; 
+/* --- Progress Bar --- */
+.progress-container {
+    border: 1px solid #808080;
+    background: white;
+    box-shadow: inset 1px 1px 0 black;
+    height: 20px;
+    position: relative;
+    padding: 2px;
 }
 
-.btn.incorrect
-{
-    background-color:red
-}
-#progress-bar-container{
-    width:80%;
-    height:10px;
-    background-color:#555;
-    border-radius:5px;
-    margin:0 auto 2rem auto;
+.progress-bar {
+    background: var(--win-blue);
+    height: 100%;
+    width: 0%;
 }
 
-#progress-bar{
-    height:100%;
-    width:0%;
-    background-color:#00f5d4;
-    border-radius: 5px;
-    transition:width 0.5s ease-in-out;
+/* --- Answers Grid --- */
+.answers-grid {
+    display: grid;
+    gap: 10px;
 }
 
-#feedback{
-    margin-top:1rem;
-    font-size:1.2rem;
-    font-weight:bold;
-    padding:0.5rem;
-    border-radius:0.5rem;
+.answer-btn {
+    background: var(--win-gray);
+    padding: 10px;
+    border: 2px solid;
+    border-color: white #808080 #808080 white;
+    box-shadow: 1px 1px 0 black;
+    text-align: left;
+    cursor: pointer;
+    font-size: 14px;
 }
 
-#feedback.correct{
-    color:green;
+.answer-btn:active {
+    border-color: #808080 white white #808080;
+    transform: translate(1px, 1px);
+    box-shadow: none;
 }
 
-#feedback.incorrect{
-    color:red;
+.answer-btn.selected {
+    background: white;
+    border: 2px dotted black;
+    /* Focus rect style */
+}
+
+.answer-btn.correct {
+    background-color: #00ff00;
+    /* Retro pure green */
+}
+
+.answer-btn.incorrect {
+    background-color: #ff0000;
+    /* Retro pure red */
+    color: white;
+}
+
+/* --- Feedback --- */
+.feedback {
+    border: 2px solid;
+    border-color: white #808080 #808080 white;
+    padding: 10px;
+    background: var(--win-gray);
+    margin-top: 15px;
+}
+
+/* --- Score Circle Replacement --- */
+.score-circle {
+    display: none;
+    /* Hide the complex SVG */
+}
+
+.result-content {
+    text-align: center;
+}
+
+#final-score {
+    font-size: 48px;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    display: block;
+    margin: 20px 0;
+}
+
+/* --- Utility --- */
+.hide {
+    display: none !important;
+}
+
+/* Hide modern decorative elements */
+.background-globes {
+    display: none;
+}
+
+.badge {
+    display: none;
+}
+
+/* --- Loading --- */
+.spinner {
+    /* Simple hourglass or just text? Let's keep a simple spinner but make it monochrome */
+    width: 20px;
+    height: 20px;
+    border: 2px solid black;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 10px auto;
 }

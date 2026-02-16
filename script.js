@@ -1,163 +1,245 @@
 const apiUrl = '/api/generate';
-let questions=[];
 
-const startScreen=document.querySelector("#start-screen");
-const displayScreen=document.querySelector("#display-screen");
-const scoreScreen=document.querySelector("#score-screen");
+// --- DOM Elements ---
+const startScreen = document.getElementById('start-screen');
+const quizScreen = document.getElementById('quiz-screen');
+const resultScreen = document.getElementById('result-screen');
+const loadingIndicator = document.getElementById('loading-indicator');
 
-const startButton=document.querySelector("#start");
-const nextButton=document.querySelector("#next");
-const restartButton=document.querySelector("#restart");
+const topicInput = document.getElementById('topic-input');
+const startBtn = document.getElementById('start-btn');
+const restartBtn = document.getElementById('restart-btn');
 
-const question=document.querySelector("#question");
-const answerButton=document.querySelector("#answer-options");
-const finalScore=document.querySelector("#final");
-const progressBar=document.querySelector("#progress-bar");
-const feedback=document.querySelector("#feedback");
-let currQuestionIdx,score;
+const questionText = document.getElementById('question-text');
+const answersGrid = document.getElementById('answers-grid');
+const feedbackArea = document.getElementById('feedback-area');
+const feedbackText = document.getElementById('feedback-text');
+const nextBtn = document.getElementById('next-btn');
 
-async function generateQuestions(topic) {
-    const prompt=`Generate 5 unique quiz questions on the topic "${topic}".
-        Return the response as a valid JSON array of objects, and nothing else. Do not include any introductory text or code block formatting.
-        Each object in the array must have this exact structure:
-        {
-            "question":"Your question here?",
-            "answers":[
-                {"text": "Answer 1","correct": boolean},
-                {"text": "Answer 2","correct": boolean},
-                {"text": "Answer 3","correct": boolean},
-                {"text": "Answer 4","correct": boolean}
-            ]
-        }
-        Ensure that for each question exactly one answer has "correct" set to true.`;
-    const requestBody={
-        contents:[{
-            parts:[{
-                text: prompt
-            }]
-        }],
-    };
-        const response=await fetch(apiUrl,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(requestBody),
-        });
+const progressBar = document.getElementById('progress-bar');
+const questionCounter = document.getElementById('question-counter');
+const currentScoreDisplay = document.getElementById('current-score');
+const finalScoreDisplay = document.getElementById('final-score');
+const scoreCircleFg = document.getElementById('score-circle-fg');
 
-        if (!response.ok){
-            throw new Error(`API request failed with status ${response.status}`);
-        }
+// --- State ---
+let questions = [];
+let currentQuestionIndex = 0;
+let score = 0;
 
-         const data = await response.json();
-    
-    let jsonString = data.candidates[0].content.parts[0].text;
+// --- Event Listeners ---
+startBtn.addEventListener('click', startQuiz);
+nextBtn.addEventListener('click', loadNextQuestion);
+restartBtn.addEventListener('click', resetQuiz);
 
-    if (jsonString.startsWith("```json")) {
-        jsonString = jsonString.slice(7, -3).trim();
-    }
+topicInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') startQuiz();
+});
 
-    return JSON.parse(jsonString); 
-}
-startButton.addEventListener('click', startQuiz);
+// --- Logic ---
 
 async function startQuiz() {
-    const topicInput=document.getElementById('topic-input');
-    const topic=topicInput.value.trim();
-
-    if (topic===""){
-        alert("Please enter a topic for the quiz!");
+    const topic = topicInput.value.trim();
+    if (!topic) {
+        showError('Please enter a topic first!');
         return;
     }
-    startButton.textContent=`Generating ${topic} Quiz...`;
-    startButton.disabled=true;
 
-    const generatedQuestions=await generateQuestions(topic);
+    // UI: Show loading
+    startBtn.disabled = true;
+    loadingIndicator.classList.remove('hide');
 
-    if (generatedQuestions && generatedQuestions.length > 0) {
-        questions=generatedQuestions;
+    try {
+        questions = await fetchQuestions(topic);
 
-        startScreen.classList.add('hide');
-        displayScreen.classList.remove('hide');
+        if (!questions || questions.length === 0) {
+            throw new Error('No questions generated.');
+        }
 
-        currQuestionIdx = 0;
+        // Initialize Quiz
+        currentQuestionIndex = 0;
         score = 0;
+        updateScoreDisplay();
+
+        // Switch Screens
+        startScreen.classList.add('hide'); // Actually hide the section
+        startScreen.classList.remove('active');
+
+        quizScreen.classList.remove('hide');
+        quizScreen.classList.add('active');
 
         showQuestion();
-    } else {
-        alert("Failed to generate quiz questions. Please try again/later.");
+
+    } catch (error) {
+        console.error(error);
+        alert(`Error: ${error.message}`);
+        startBtn.disabled = false;
+        loadingIndicator.classList.add('hide');
+    }
+}
+
+async function fetchQuestions(topic) {
+    const prompt = `Generate 10 multiple-choice quiz questions about "${topic}".
+    Return ONLY a JSON object with a key "questions" containing an array of objects.
+    Each object must have:
+    - "question": string
+    - "answers": array of 4 objects { "text": string, "correct": boolean }
+    
+    Example format:
+    {
+      "questions": [
+        {
+          "question": "...",
+          "answers": [
+            {"text": "A", "correct": true},
+            {"text": "B", "correct": false},
+            {"text": "C", "correct": false},
+            {"text": "D", "correct": false}
+          ]
+        }
+      ]
+    }
+    `;
+
+    const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            messages: [
+                { role: "system", content: "You are a helpful quiz generator JSON API." },
+                { role: "user", content: prompt }
+            ]
+        })
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to connect to API');
     }
 
-    startButton.textContent = "Start Quiz!";
-    startButton.disabled = false;
+    const data = await response.json();
+    const content = data.choices[0].message.content;
+
+    // Robust JSON parsing
+    return parseGroqResponse(content);
+}
+
+function parseGroqResponse(content) {
+    try {
+        // Remove markdown code blocks if present
+        let cleanContent = content.replace(/```json/g, '').replace(/```/g, '').trim();
+        const json = JSON.parse(cleanContent);
+        return json.questions || json; // Handle wrapped or unwrapped array
+    } catch (e) {
+        console.error('JSON Parse Error:', e);
+        console.log('Raw content:', content);
+        throw new Error('Failed to parse AI response');
+    }
 }
 
 function showQuestion() {
-    nextButton.classList.add('hide');
-    feedback.classList.add('hide');
-    answerButton.innerHTML = '';
+    const question = questions[currentQuestionIndex];
 
-    const progressPercent=(currQuestionIdx / questions.length) * 100;
-    progressBar.style.width=`${progressPercent}%`;
+    // Update Progress
+    const progress = ((currentQuestionIndex) / questions.length) * 100;
+    progressBar.style.width = `${progress}%`;
+    questionCounter.textContent = `Question ${currentQuestionIndex + 1}/${questions.length}`;
 
-    let currQuestion=questions[currQuestionIdx];
-    question.textContent=currQuestion.question;
+    // Render Text
+    questionText.textContent = question.question;
 
-    currQuestion.answers.forEach(answer => {
-        const button=document.createElement('button');
-        button.textContent=answer.text;
-        button.classList.add('btn');
-        button.dataset.correct=answer.correct;
-        button.addEventListener('click', selectAnswer);
-        answerButton.appendChild(button);
+    // Clear previous
+    answersGrid.innerHTML = '';
+    feedbackArea.classList.add('hide');
+    feedbackArea.className = 'feedback hide'; // Reset classes
+    nextBtn.classList.add('hide');
+
+    // Render Answers
+    question.answers.forEach((answer, index) => {
+        const btn = document.createElement('button');
+        btn.textContent = answer.text;
+        btn.classList.add('answer-btn');
+        btn.dataset.correct = answer.correct;
+        btn.onclick = (e) => selectAnswer(e, btn);
+        answersGrid.appendChild(btn);
     });
 }
 
-function selectAnswer(e) {
-    const selectedButton=e.target;
-    const isCorrect=selectedButton.dataset.correct==='true';
+function selectAnswer(e, selectedBtn) {
+    const isCorrect = selectedBtn.dataset.correct === 'true';
+    const allBtns = document.querySelectorAll('.answer-btn');
 
-    feedback.classList.remove('hide','correct','incorrect');
+    // Disable all buttons
+    allBtns.forEach(btn => btn.disabled = true);
 
-    if (isCorrect){
-        selectedButton.classList.add('correct');
-        feedback.textContent="Correct!";
-        feedback.classList.add('correct');
+    selectedBtn.classList.add('selected');
+
+    if (isCorrect) {
+        selectedBtn.classList.add('correct');
         score++;
-    } else{
-        selectedButton.classList.add('incorrect');
-        const correctAnswer=Array.from(answerButton.children)
-            .find(btn=>btn.dataset.correct=='true').innerText;
-        feedback.textContent=`Incorrect! The correct answer is: ${correctAnswer}`;
-        feedback.classList.add('incorrect');
+        feedbackText.textContent = "Correct! Well done.";
+        feedbackArea.classList.add('correct');
+    } else {
+        selectedBtn.classList.add('incorrect');
+        // Highlight correct one
+        const correctBtn = Array.from(allBtns).find(btn => btn.dataset.correct === 'true');
+        if (correctBtn) correctBtn.classList.add('correct');
+        feedbackText.textContent = `Incorrect! The correct answer was: ${correctBtn.textContent}`;
+        feedbackArea.classList.add('incorrect');
     }
 
-    Array.from(answerButton.children).forEach(button => {
-        if (button.dataset.correct==='true') {
-            button.classList.add('correct');
-        }
-        button.disabled=true;
-    });
-    nextButton.classList.remove('hide');
+    updateScoreDisplay();
+    feedbackArea.classList.remove('hide');
+    nextBtn.classList.remove('hide');
+
+    // Scroll to feedback on mobile
+    feedbackArea.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-nextButton.addEventListener('click', () => {
-    currQuestionIdx++;
-    if (currQuestionIdx < questions.length) {
+function loadNextQuestion() {
+    currentQuestionIndex++;
+
+    if (currentQuestionIndex < questions.length) {
         showQuestion();
     } else {
-        progressBar.style.width='100%';
-        setTimeout(()=>{
-            showScore();
-        },500);
+        finishQuiz();
     }
-});
+}
 
-restartButton.addEventListener('click', () => {
-    scoreScreen.classList.add('hide');
+function finishQuiz() {
+    quizScreen.classList.add('hide');
+    quizScreen.classList.remove('active');
+
+    resultScreen.classList.remove('hide');
+
+    // Animate Score
+    finalScoreDisplay.textContent = `${score}/${questions.length}`;
+
+    // Calculate circle stroke offset (283 is full circumference)
+    const percentage = score / questions.length;
+    const offset = 283 - (283 * percentage);
+
+    // Small delay for CSS animation to trigger
+    setTimeout(() => {
+        scoreCircleFg.style.strokeDashoffset = offset;
+    }, 100);
+}
+
+function resetQuiz() {
+    resultScreen.classList.add('hide');
     startScreen.classList.remove('hide');
-});
+    startScreen.classList.add('active');
 
-function showScore(){
-    displayScreen.classList.add('hide');
-    scoreScreen.classList.remove('hide');
-    finalScore.innerText=`${score}/${questions.length}`;
-}   
+    // Reset UI state
+    startBtn.disabled = false;
+    loadingIndicator.classList.add('hide');
+    topicInput.value = '';
+    scoreCircleFg.style.strokeDashoffset = 283; // Reset circle
+}
+
+function updateScoreDisplay() {
+    currentScoreDisplay.textContent = `Score: ${score}`;
+}
+
+function showError(msg) {
+    alert(msg); // Simple for now
+}

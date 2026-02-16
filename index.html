@@ -1,41 +1,110 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuizGen AI | Powered by Groq</title>
+
+    <!-- Fonts: Outlook & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Outfit:wght@300;500;700&display=swap"
+        rel="stylesheet">
+
     <link rel="stylesheet" href="style.css">
-    <title>Quiz!</title>
 </head>
+
 <body>
-    <div class="quiz-container">
-
-        <div id="start-screen">
-            <h1>AI Quiz Generator</h1>
-            <p>Enter a topic and test your knowledge</p>
-            <input id="topic-input" type="text" placeholder="e.g. Machine Learning, Web Dev">
-            <br>
-            <button id="start" class="btn">Generate Quiz</button>
-        </div>
-
-        <div id="display-screen" class="hide">  
-            <div id="progress-bar-container">
-                <div id="progress-bar">
-                </div>
-            </div>
-            <h2 id="question">Placeholder for question</h2>
-            <div id="answer-options"> </div>
-            <div id="feedback" class="hide"></div>
-            <button id="next" class="hide btn">Next</button>
-        </div>
-
-        <div id="score-screen" class="hide">
-            <h1>Quiz Completed!</h1>
-            <p>Your final score is: <span id="final">0</span> </p>
-            <button id="restart" class="btn">Restart Quiz</button>
-        </div>
+    <div class="background-globes">
+        <div class="globe globe-1"></div>
+        <div class="globe globe-2"></div>
+        <div class="globe globe-3"></div>
     </div>
 
-    <script src="script.js"></script>
+    <main class="glass-container">
+        <!-- Start Screen -->
+        <section id="start-screen" class="screen active">
+            <header class="hero-header">
+                <!-- Title Bar Style -->
+                <h1>
+                    <span>QuizGen.exe</span>
+                    <button
+                        style="background:#c0c0c0; border:1px outset white; width:16px; height:16px; font-size:10px; line-height:10px; padding:0;">X</button>
+                </h1>
+                <p>Enter a topic to generate a new quiz protocol.</p>
+            </header>
 
+            <div class="input-group">
+                <input id="topic-input" type="text"
+                    placeholder="Enter a topic (e.g., Quantum Physics, 90s Pop, ReactJS)" autocomplete="off">
+                <button id="start-btn" class="btn primary-btn">
+                    <span>Generate Quiz</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14" />
+                        <path d="m12 5 7 7-7 7" />
+                    </svg>
+                </button>
+            </div>
+
+            <div id="loading-indicator" class="hide">
+                <div class="spinner"></div>
+                <p>Consulting the AI...</p>
+            </div>
+        </section>
+
+        <!-- Quiz Screen -->
+        <section id="quiz-screen" class="screen hide">
+            <div class="quiz-header">
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <div class="stats">
+                    <span id="question-counter">Question 1/5</span>
+                    <span id="current-score">Score: 0</span>
+                </div>
+            </div>
+
+            <div class="question-container">
+                <h2 id="question-text">Loading question...</h2>
+            </div>
+
+            <div id="answers-grid" class="answers-grid">
+                <!-- Buttons injected by JS -->
+            </div>
+
+            <div id="feedback-area" class="feedback hide">
+                <div class="feedback-icon" id="feedback-icon"></div>
+                <p id="feedback-text"></p>
+                <button id="next-btn" class="btn secondary-btn">Next Question</button>
+            </div>
+        </section>
+
+        <!-- Result Screen -->
+        <section id="result-screen" class="screen hide">
+            <div class="result-content">
+                <div class="score-circle">
+                    <svg viewBox="0 0 100 100">
+                        <circle class="bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="fg" id="score-circle-fg" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <div class="score-text">
+                        <span id="final-score">0/5</span>
+                        <small>Correct</small>
+                    </div>
+                </div>
+
+                <h2 id="result-title">Quiz Completed!</h2>
+                <p id="result-message">Great job!</p>
+
+                <button id="restart-btn" class="btn primary-btn">Create New Quiz</button>
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
 </body>
+
 </html>

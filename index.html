@@ -37,33 +37,45 @@
             </header>
 
             <div class="input-group">
-                <input id="topic-input" type="text"
-                    placeholder="Enter a topic (e.g., Quantum Physics, 90s Pop, ReactJS)" autocomplete="off">
+                <label for="topic-input">Subject:</label>
+                <input id="topic-input" type="text" placeholder="e.g. Quantum Mechanics" autocomplete="off">
+
+                <div class="options-row">
+                    <div class="option-group">
+                        <label for="difficulty-select">Difficulty:</label>
+                        <select id="difficulty-select">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                    <div class="option-group checkbox-group">
+                        <input type="checkbox" id="timer-toggle">
+                        <label for="timer-toggle">Timed Mode (20s)</label>
+                    </div>
+                </div>
+
                 <button id="start-btn" class="btn primary-btn">
-                    <span>Generate Quiz</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14" />
-                        <path d="m12 5 7 7-7 7" />
-                    </svg>
+                    <span>Initialize Quiz</span>
                 </button>
             </div>
 
             <div id="loading-indicator" class="hide">
                 <div class="spinner"></div>
-                <p>Consulting the AI...</p>
+                <p id="loading-text">Contacting Mainframe...</p>
             </div>
         </section>
 
         <!-- Quiz Screen -->
         <section id="quiz-screen" class="screen hide">
             <div class="quiz-header">
+                <div class="info-bar">
+                    <span id="question-counter">Q 1/10</span>
+                    <span id="timer-display" class="hide">Time: 20</span>
+                    <span id="current-score">Score: 0</span>
+                </div>
                 <div class="progress-container">
                     <div class="progress-bar" id="progress-bar"></div>
-                </div>
-                <div class="stats">
-                    <span id="question-counter">Question 1/5</span>
-                    <span id="current-score">Score: 0</span>
                 </div>
             </div>
 
@@ -85,21 +97,20 @@
         <!-- Result Screen -->
         <section id="result-screen" class="screen hide">
             <div class="result-content">
-                <div class="score-circle">
-                    <svg viewBox="0 0 100 100">
-                        <circle class="bg" cx="50" cy="50" r="45"></circle>
-                        <circle class="fg" id="score-circle-fg" cx="50" cy="50" r="45"></circle>
-                    </svg>
-                    <div class="score-text">
-                        <span id="final-score">0/5</span>
-                        <small>Correct</small>
-                    </div>
+                <!-- Old Score Circle Removed -->
+
+                <h2 id="result-title">Sequence Complete</h2>
+                <div id="final-score">0/10</div>
+                <p id="result-message">Processing results...</p>
+
+                <div id="review-container" class="hide">
+                    <h3>Mission Report:</h3>
+                    <div id="review-list"></div>
                 </div>
 
-                <h2 id="result-title">Quiz Completed!</h2>
-                <p id="result-message">Great job!</p>
-
-                <button id="restart-btn" class="btn primary-btn">Create New Quiz</button>
+                <div class="action-buttons">
+                    <button id="restart-btn" class="btn primary-btn">New Operation</button>
+                </div>
             </div>
         </section>
     </main>

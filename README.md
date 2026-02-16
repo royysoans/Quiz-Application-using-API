@@ -1,25 +1,48 @@
-## Introduction
-This is a simple, responsive web development quiz built using HTML, CSS, and JavaScript. It presents multiple-choice questions, gives immediate feedback after each selection, and shows the final score at the end. The project demonstrates dynamic DOM manipulation, event handling, and responsive design principles.
+# 💾 QuizGen AI (v2.0)
 
-## Reflection
-Building this quiz taught me how to combine HTML, CSS, and JavaScript to make an interactive project. I learned how to store questions in arrays of objects, create DOM elements from that data, and use event listeners for user interactions. Adding immediate feedback helped me understand conditional logic and how to change styles with class names.
+**QuizGen AI** is an "Old School" inspired, AI-powered quiz generator that turns any topic into a 10-question challenge instantly. Powered by the **Groq API** and wrapped in a nostalgic **Windows 95 aesthetic**.
 
-## Live Demo
-You can try the quiz online here: [**Click to Open Quiz**](https://quiz-application-using-api.vercel.app/)
+## 🚀 Features
 
-## Problems Faced
-### Challenge 1: Making the Progress Bar Work Correctly
-**Problem:** I needed the progress bar to accurately show how far the user was in the quiz, but it kept hitting 100% early.
-**Solution:** The logic that worked best was to update the bar's width each time a new question appeared. I calculated the percentage based on how many questions had been completed so far. Then, to give a "finish" effect, I used a setTimeout() function to let the progress bar reach 100% before the result screen appeared.
+-   **AI Protocol**: Leverages `llama-3.3-70b-versatile` via Groq for lightning-fast question generation.
+-   **Retro UI**: Authentically styled after classic Windows 95 dialog boxes with a teal desktop background.
+-   **Mission Difficulty**: Choose between **Easy**, **Medium**, or **Hard** modes to challenge your knowledge.
+-   **Time Trial**: Optional **Timed Mode** (20s per question) for maximum urgency.
+-   **Mission Report**: A detailed review screen at the end showing your answers vs. the correct ones.
+-   **Retro Audio**: 8-bit sound effects generated via Web Audio API.
 
-### Challenge 2: Checking for the Correct Answer
-**Problem:** When a user clicked a button, I needed a simple and reliable way for the JavaScript to know if that specific button was the correct choice.  
-**Solution:** I used HTML `data-` attributes. When the buttons were created in JavaScript, I added a special attribute, `data-correct="true"`, only to the button with the right answer. This made it easy to check: when a button was clicked, the code just had to look for that attribute to confirm if it was the correct one.
+## 🛠️ Technology Stack
 
-### Challenge 3: Displaying the Correct Answer After a Wrong Choice
-**Problem:** I wanted the quiz to show the correct answer whenever the user picked the wrong one.  
-**Solution:** I used class changes to mark the selected wrong button in red, then found the correct button and displayed its text in the feedback message. This way, the user could immediately see both their mistake and the correct answer.
+-   **Frontend**: Vanilla HTML5, CSS3 (Retro styling), and JavaScript.
+-   **AI Engine**: [Groq API](https://groq.com/) (OpenAI-compatible).
+-   **Serverless Proxy**: Vercel Serverless Functions (Node.js) to securely handle API keys.
+-   **Styling**: Custom CSS (No frameworks) for pixel-perfect retro aesthetics.
 
-### Challenge 4: Learning to Use the "Hide" Class for Screen Switching
-**Problem:** I needed a simple way to switch between the start screen, quiz screen, and score screen without removing elements from the DOM.  
-**Solution:** I created a reusable `.hide` CSS class that sets `display: none;`. By adding or removing this class in JavaScript, I could show or hide any section instantly. This made it easy to control which part of the quiz was visible and kept the HTML structure compact.
+## 📦 Getting Started
+
+### Prerequisites
+-   A **Groq API Key** (Get it at [console.groq.com](https://console.groq.com/)).
+-   [Vercel CLI](https://vercel.com/docs/cli) installed (`npm i -g vercel`).
+
+### Local Development
+1. Clone the repository.
+2. Create a `.env.local` file in the root:
+   ```bash
+   GROQ_API_KEY=your_gsk_key_here
+   ```
+3. Run the development server:
+   ```bash
+   vercel dev
+   ```
+4. Open `http://localhost:3000` in your browser.
+
+## 🚢 Deployment
+
+1. Set your `GROQ_API_KEY` in your Vercel Project Settings (Environment Variables).
+2. Run `vercel` or push your changes to GitHub for automatic deployment.
+
+## 📄 Mission Wishlist
+Check out [improvements_wishlist.md](./.gemini/antigravity/brain/b51959df-b4fe-4c7d-88f1-0838d8ed62e5/improvements_wishlist.md) for planned future upgrades!
+
+---
+*Created by Royston Soans*
